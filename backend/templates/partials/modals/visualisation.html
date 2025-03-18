@@ -8,11 +8,53 @@
         </button>
       </div>
       <div class="modal-body">
-        <div id="result-query"></div>
-        <div id="meta-info"></div>
-        <div id="result-tree">
-          <br><strong style="color: red;">Please execute your query first.</strong><br><br>
-        </div>
+          <ul class="nav nav-tabs">
+              <li role="presentation" class="active"><a href="#update1" aria-controls="update1" role="tab"
+                                                        data-toggle="tab">Update 1 <span class="glyphicon glyphicon-ok" aria-hidden="true"></span></a></li>
+              <li role="presentation"><a href="#update2" aria-controls="update2" role="tab" data-toggle="tab">Update
+                  2 <span class="glyphicon glyphicon-play" aria-hidden="true"></span></a></li>
+              <li role="presentation"><a href="#update3" aria-controls="update3" role="tab" data-toggle="tab">Update
+                  3</a></li>
+          </ul>
+          <div class="tab-content">
+              <div role="tabpanel" class="tab-pane active" id="update1">
+                  <div>
+                      <br><strong style="color: green;">Done</strong><br><br>
+                      <div class="progress">
+                          <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0"
+                               aria-valuemax="100" style="width: 100%;">
+                              100%
+                          </div>
+                      </div>
+                      <br>
+                  </div>
+                  <div id="result-query"></div>
+                  <div id="meta-info"></div>
+                  <div id="result-tree"></div>
+              </div>
+              <div role="tabpanel" class="tab-pane" id="update2">
+                  <div>
+                      <br><strong>Running</strong><span> (Step 2/6: Updating PSO)</span><br><br>
+                      <div class="progress">
+                          <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0"
+                               aria-valuemax="100" style="width: 60%;">
+                              60%
+                          </div>
+                      </div>
+                      <p>Think of query tree here</p>
+                  </div>
+                  <div id="result-query"></div>
+                  <div id="meta-info"></div>
+                  <div id="result-tree"></div>
+              </div>
+              <div role="tabpanel" class="tab-pane" id="update3">
+                  <div id="result-query"></div>
+                  <div id="meta-info"></div>
+                  <div id="result-tree">
+                      <br><strong style="color: red;">Not started yet</strong><br><br>
+                  </div>
+              </div>
+          </div>
       </div>
       <div class="modal-footer">
         <div id="lastQueries" class="pull-left" style="margin: -25px 0px;"></div>
