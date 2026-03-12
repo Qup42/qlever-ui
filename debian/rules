@@ -13,6 +13,13 @@ override_dh_virtualenv:
 		--preinstall "setuptools>=68.0" \
 		--preinstall "wheel>=0.41" \
 		--upgrade-pip
+	# Collect static files into the package staging area
+	mkdir -p debian/qlever-ui/usr/share/qlever-ui/static
+	DJANGO_SETTINGS_MODULE=qlever.settings \
+	QLEVERUI_SECRET_KEY=build-time-placeholder \
+	QLEVERUI_DATABASE_URL=sqlite:////tmp/qlever-ui-build.db \
+	QLEVERUI_STATIC_ROOT=$(CURDIR)/debian/qlever-ui/usr/share/qlever-ui/static \
+		debian/qlever-ui/opt/venvs/qlever-ui/bin/python -m django collectstatic --noinput
 
 override_dh_shlibdeps:
 	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info

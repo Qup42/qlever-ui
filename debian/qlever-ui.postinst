@@ -19,7 +19,6 @@ case "$1" in
         # Create required directories
         install -d -m 0750 -o qlever-ui -g qlever-ui /var/log/qlever-ui
         install -d -m 0750 -o qlever-ui -g qlever-ui /var/lib/qlever-ui
-        install -d -m 0750 -o qlever-ui -g qlever-ui /var/lib/qlever-ui/static
 
         # Install seed database if not already present
         if [ ! -f /var/lib/qlever-ui/qleverui.sqlite3 ]; then
@@ -36,13 +35,6 @@ case "$1" in
                 /etc/qlever-ui/qlever-ui.env
         fi
 
-        # Run collectstatic
-        DJANGO_SETTINGS_MODULE=qlever.settings \
-        sudo -E -u qlever-ui \
-            /opt/venvs/qlever-ui/bin/python -m django collectstatic \
-            --noinput \
-            --settings=qlever.settings \
-            2>&1 | logger -t qlever-ui-postinst || true
         ;;
 esac
 
