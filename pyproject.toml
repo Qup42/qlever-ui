@@ -23,6 +23,10 @@ dependencies = [
 [tool.setuptools.packages.find]
 include = ["qlever*", "backend*", "resources*", "formatter*"]
 
+[tool.setuptools.package-data]
+backend = ["static/**/*", "templates/**/*"]
+qlever = ["*"]
+
 [tool.ruff]
 line-length = 79
 
