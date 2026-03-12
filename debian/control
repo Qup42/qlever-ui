@@ -1,7 +1,7 @@
 Source: qlever-ui
 Section: web
 Priority: optional
-Maintainer: QLever Team <qlever@cs.uni-freiburg.de>
+Maintainer: Julian Mundhahs <mundhahj@tf.uni-freiburg.de>
 Build-Depends:
  debhelper-compat (= 13),
  dh-virtualenv (>= 1.2),
@@ -11,7 +11,7 @@ Build-Depends:
  nodejs,
  npm
 Standards-Version: 4.6.2
-Homepage: https://github.com/ad-freiburg/qlever-ui
+Homepage: https://github.com/qlever-dev/qlever-ui
 
 Package: qlever-ui
 Architecture: any
