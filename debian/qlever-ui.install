@@ -1,0 +1,2 @@
+debian/qlever-ui.env.default usr/share/qlever-ui
+db/qleverui.sqlite3 usr/share/qlever-ui

@@ -1,0 +1,26 @@
+Source: qlever-ui
+Section: web
+Priority: optional
+Maintainer: QLever Team <qlever@cs.uni-freiburg.de>
+Build-Depends:
+ debhelper-compat (= 13),
+ dh-virtualenv (>= 1.2),
+ python3,
+ python3-venv,
+ python3-dev,
+ nodejs,
+ npm
+Standards-Version: 4.6.2
+Homepage: https://github.com/ad-freiburg/qlever-ui
+
+Package: qlever-ui
+Architecture: any
+Depends:
+ ${misc:Depends},
+ python3,
+ adduser,
+ sudo,
+Description: A user-friendly interface for the QLever SPARQL engine
+ qlever-ui is a Django web application that provides a browser-based
+ interface for the QLever SPARQL engine. It supports query editing,
+ result display, and backend management.

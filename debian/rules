@@ -1,0 +1,21 @@
+#!/usr/bin/make -f
+export DH_VIRTUALENV_INSTALL_ROOT=/opt/venvs
+
+%:
+	dh $@ --with python-virtualenv
+
+override_dh_virtualenv:
+	npm ci
+	npm run build
+	dh_virtualenv \
+		--python /usr/bin/python3 \
+		--builtin-venv \
+		--preinstall "setuptools>=68.0" \
+		--preinstall "wheel>=0.41" \
+		--upgrade-pip
+
+override_dh_shlibdeps:
+	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info
+
+override_dh_strip:
+	dh_strip --exclude=python

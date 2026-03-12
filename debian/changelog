@@ -1,0 +1,5 @@
+qlever-ui (0.1.0-1) stable; urgency=medium
+
+  * Initial Debian packaging.
+
+ -- QLever Team <qlever@cs.uni-freiburg.de>  Tue, 10 Mar 2026 00:00:00 +0000
