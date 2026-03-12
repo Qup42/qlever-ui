@@ -10,7 +10,7 @@ EnvironmentFile=/etc/qlever-ui/qlever-ui.env
 WorkingDirectory=/var/lib/qlever-ui
 ExecStart=/opt/venvs/qlever-ui/bin/gunicorn \
     qlever.wsgi:application \
-    --bind 0.0.0.0:8000 \
+    --bind 0.0.0.0:8176 \
     --workers 4 \
     --timeout 120 \
     --access-logfile /var/log/qlever-ui/access.log \
