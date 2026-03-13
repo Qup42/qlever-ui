@@ -1,3 +1,4 @@
+debian/qlever-ui-manage usr/bin
 debian/qlever-ui.env.default usr/share/qlever-ui
 debian/qlever-ui-nginx.conf usr/share/qlever-ui
 debian/qlever-ui-apache.conf usr/share/qlever-ui
