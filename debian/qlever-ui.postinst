@@ -27,6 +27,11 @@ case "$1" in
                 /var/lib/qlever-ui/qleverui.sqlite3
         fi
 
+        # Allow nginx to connect to the qlever-ui socket
+        if id www-data >/dev/null 2>&1; then
+            usermod -aG qlever-ui www-data
+        fi
+
         # Install default env file if not already present
         if [ ! -f /etc/qlever-ui/qlever-ui.env ]; then
             install -d -m 0750 -o root -g qlever-ui /etc/qlever-ui
@@ -35,6 +40,11 @@ case "$1" in
                 /etc/qlever-ui/qlever-ui.env
         fi
 
+        echo ""
+        echo "qlever-ui is now running on a Unix socket."
+        echo "To expose it via a reverse proxy, see: man qlever-ui"
+        echo "Example configurations for apache and nginx are available in /usr/share/qlever-ui/."
+        echo ""
         ;;
 esac
 

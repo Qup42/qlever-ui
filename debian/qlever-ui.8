@@ -1,0 +1,155 @@
+.TH QLEVER\-UI 8 "2026-03-12" "qlever-ui" "System Administration"
+.SH NAME
+qlever\-ui \- QLever UI web application administration
+.SH SYNOPSIS
+.B qlever\-ui
+is a Django/gunicorn web application managed by systemd.
+This manual describes how to expose it via a reverse proxy or directly on a TCP port.
+.SH DESCRIPTION
+By default,
+.B qlever\-ui
+binds to a Unix domain socket at
+.IR /run/qlever\-ui/qlever\-ui.sock .
+It is not directly reachable from the network.
+A reverse proxy such as nginx or Apache is the recommended way to expose it.
+.PP
+Example configurations for both are installed in
+.IR /usr/share/qlever\-ui/ .
+.SH ACTIVATION WITH NGINX
+.SS Required modules
+nginx must have
+.B proxy
+and
+.B proxy_http
+support compiled in (the default in Debian packages).
+.SS Steps
+.TP
+1.
+Enable the example configuration:
+.PP
+.RS
+.EX
+cp /usr/share/qlever\-ui/qlever\-ui\-nginx.conf \\
+   /etc/nginx/sites\-available/qlever\-ui.conf
+ln \-s /etc/nginx/sites\-available/qlever\-ui.conf \\
+   /etc/nginx/sites\-enabled/
+.EE
+.RE
+.TP
+2.
+Set
+.B server_name
+to your hostname by editing
+.IR /etc/nginx/sites\-available/qlever\-ui.conf .
+.TP
+3.
+Test and reload nginx:
+.PP
+.RS
+.EX
+nginx \-t
+systemctl reload nginx
+.EE
+.RE
+.SH ACTIVATION WITH APACHE
+.SS Required modules
+.EX
+a2enmod proxy proxy_http headers
+.EE
+.SS Steps
+.TP
+1.
+Enable the example configuration:
+.PP
+.RS
+.EX
+cp /usr/share/qlever\-ui/qlever\-ui\-apache.conf \\
+   /etc/apache2/sites\-available/qlever\-ui.conf
+a2ensite qlever\-ui
+.EE
+.RE
+.TP
+2.
+Set
+.B ServerName
+to your hostname by editing
+.IR /etc/apache2/sites\-available/qlever\-ui.conf .
+.TP
+3.
+Reload Apache:
+.PP
+.RS
+.EX
+systemctl reload apache2
+.EE
+.RE
+.SH RUNNING DIRECTLY ON A TCP PORT
+If you prefer to expose
+.B qlever\-ui
+directly on a TCP port without a reverse proxy, you must override the
+service configuration.
+.TP
+1.
+Create a systemd drop\-in:
+.PP
+.RS
+.EX
+systemctl edit qlever\-ui.service
+.EE
+.RE
+.TP
+2.
+Add the following (replacing
+.I 8176
+with your desired port):
+.PP
+.RS
+.EX
+[Service]
+ExecStart=
+ExecStart=/opt/venvs/qlever\-ui/bin/gunicorn qlever.wsgi:application \\
+    \-\-bind 0.0.0.0:8176 \\
+    \-\-workers 4 \-\-timeout 120 \\
+    \-\-access\-logfile /var/log/qlever\-ui/access.log \\
+    \-\-error\-logfile /var/log/qlever\-ui/error.log \\
+    \-\-limit\-request\-line 10000
+.EE
+.RE
+.PP
+The empty
+.B ExecStart=
+line clears the default value before setting the new one.
+.TP
+3.
+Disable the socket unit (no longer needed) and restart the service:
+.PP
+.RS
+.EX
+systemctl disable \-\-now qlever\-ui.socket
+systemctl restart qlever\-ui.service
+.EE
+.RE
+.SH FILES
+.TP
+.I /etc/qlever\-ui/qlever\-ui.env
+Runtime environment variables (Django settings, allowed hosts, etc.).
+.TP
+.I /var/lib/qlever\-ui/qleverui.sqlite3
+Application database.
+.TP
+.I /var/log/qlever\-ui/
+Access and error logs.
+.TP
+.I /run/qlever\-ui/qlever\-ui.sock
+Unix domain socket (created at service start).
+.TP
+.I /usr/share/qlever\-ui/qlever\-ui\-nginx.conf
+Example nginx reverse\-proxy configuration.
+.TP
+.I /usr/share/qlever\-ui/qlever\-ui\-apache.conf
+Example Apache reverse\-proxy configuration.
+.SH SEE ALSO
+.BR nginx (8),
+.BR apache2 (8),
+.BR systemd.service (5),
+.BR systemd.socket (5)

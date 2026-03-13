@@ -1,2 +1,4 @@
 debian/qlever-ui.env.default usr/share/qlever-ui
+debian/qlever-ui-nginx.conf usr/share/qlever-ui
+debian/qlever-ui-apache.conf usr/share/qlever-ui
 db/qleverui.sqlite3 usr/share/qlever-ui
