@@ -38,6 +38,9 @@ case "$1" in
             install -m 0640 -o root -g qlever-ui \
                 /usr/share/qlever-ui/qlever-ui.env.default \
                 /etc/qlever-ui/qlever-ui.env
+            # Replace placeholder secret key with a secure random value
+            secret=$(python3 -c "import secrets; print(secrets.token_urlsafe(50))")
+            sed -i "s/change-me-on-install/$secret/" /etc/qlever-ui/qlever-ui.env
         fi
 
         echo ""
