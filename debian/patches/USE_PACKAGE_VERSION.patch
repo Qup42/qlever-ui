@@ -1,0 +1,34 @@
+Index: work/qlever/settings.py
+===================================================================
+--- work.orig/qlever/settings.py
++++ work/qlever/settings.py
+@@ -192,28 +192,7 @@ WHITENOISE_SKIP_COMPRESS_EXTENSIONS = (
+     "woff2",
+ )
+ 
+-try:
+-    # Get git info from files in .git
+-    with open(".git/HEAD", "r") as headFile:
+-        GIT_HEAD = headFile.read().strip()
+-    with open(".git/{}".format(GIT_HEAD.split(" ")[-1]), "r") as hashFile:
+-        GIT_HASH = hashFile.read()[:7]
+-    STATIC_VERSION = "Git commit {} on {}".format(
+-        GIT_HASH, GIT_HEAD.split("/")[-1]
+-    )
+-except Exception as e:
+-    print(e)
+-    pass
+-
+-if not STATIC_VERSION:
+-    # get svn version info if git was not successful
+-    try:
+-        versionInfo = (
+-            subprocess.check_output("svn info -r HEAD;", shell=True)
+-        ).decode("utf-8")
+-        STATIC_VERSION = re.search(r"(Revision: \d+)", versionInfo).group(1)
+-    except:
+-        pass
++STATIC_VERSION = "Packaged version: (set during build)"
+ 
+ IMPORT_EXPORT_USE_TRANSACTIONS = True
+ 

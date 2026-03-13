@@ -5,6 +5,7 @@ export DH_VIRTUALENV_INSTALL_ROOT=/opt/venvs
 	dh $@ --with python-virtualenv
 
 override_dh_virtualenv:
+	sed -i "s/^STATIC_VERSION = .*/STATIC_VERSION = \"Packaged version: $(shell dpkg-parsechangelog -S Version)\"/" qlever/settings.py
 	npm ci
 	npm run build
 	dh_virtualenv \
