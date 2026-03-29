@@ -9,4 +9,9 @@ set -a
 . /etc/qlever-ui/qlever-ui.env
 set +a
 export QLEVERUI_DATABASE_URL=sqlite:////$(pwd)/qleverui.sqlite3
-exec /opt/venvs/qlever-ui/bin/python -m django "$@"
+/opt/venvs/qlever-ui/bin/gunicorn \
+    qlever.wsgi:application \
+    --bind 0.0.0.0:8176 \
+    --workers 4 \
+    --timeout 120 \
+    --limit-request-line 10000

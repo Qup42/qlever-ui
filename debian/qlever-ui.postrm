@@ -4,17 +4,7 @@ set -e
 case "$1" in
     purge)
         # Remove data and config directories
-        rm -rf /var/log/qlever-ui
-        rm -rf /var/lib/qlever-ui
         rm -rf /etc/qlever-ui
-
-        # Remove system user and group
-        if getent passwd qlever-ui > /dev/null 2>&1; then
-            deluser --system qlever-ui || true
-        fi
-        if getent group qlever-ui > /dev/null 2>&1; then
-            delgroup --system qlever-ui || true
-        fi
         ;;
 esac
 

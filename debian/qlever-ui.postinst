@@ -3,35 +3,6 @@ set -e
 
 case "$1" in
     configure)
-        # Create system user and group if they don't exist
-        if ! getent group qlever-ui > /dev/null 2>&1; then
-            addgroup --system qlever-ui
-        fi
-        if ! getent passwd qlever-ui > /dev/null 2>&1; then
-            adduser --system --ingroup qlever-ui \
-                --home /var/lib/qlever-ui \
-                --no-create-home \
-                --shell /usr/sbin/nologin \
-                --gecos "QLever UI service account" \
-                qlever-ui
-        fi
-
-        # Create required directories
-        install -d -m 0750 -o qlever-ui -g qlever-ui /var/log/qlever-ui
-        install -d -m 0750 -o qlever-ui -g qlever-ui /var/lib/qlever-ui
-
-        # Install seed database if not already present
-        if [ ! -f /var/lib/qlever-ui/qleverui.sqlite3 ]; then
-            install -m 0640 -o qlever-ui -g qlever-ui \
-                /usr/share/qlever-ui/qleverui.sqlite3 \
-                /var/lib/qlever-ui/qleverui.sqlite3
-        fi
-
-        # Allow nginx to connect to the qlever-ui socket
-        if id www-data >/dev/null 2>&1; then
-            usermod -aG qlever-ui www-data
-        fi
-
         # Install default env file if not already present
         if [ ! -f /etc/qlever-ui/qlever-ui.env ]; then
             install -d -m 0750 -o root -g qlever-ui /etc/qlever-ui
@@ -42,12 +13,6 @@ case "$1" in
             secret=$(python3 -c "import secrets; print(secrets.token_urlsafe(50))")
             sed -i "s/change-me-on-install/$secret/" /etc/qlever-ui/qlever-ui.env
         fi
-
-        echo ""
-        echo "qlever-ui is now running on a Unix socket."
-        echo "To expose it via a reverse proxy, see: man qlever-ui"
-        echo "Example configurations for apache and nginx are available in /usr/share/qlever-ui/."
-        echo ""
         ;;
 esac
 
