@@ -1,3 +1,3 @@
 debian/scripts/qlever-ui usr/bin
-debian/qlever-ui.env.default usr/share/qlever-ui
+debian/qlever-ui.env.dev usr/share/qlever-ui
 db/qleverui.sqlite3 usr/share/qlever-ui

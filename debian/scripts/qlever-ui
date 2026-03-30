@@ -7,7 +7,7 @@ if [ ! -f ./qleverui.sqlite3 ]; then
 fi
 if [ ! -f ./qlever-ui.env ]; then
     echo "qlever-ui.env not found, copying default from /usr/share/qlever-ui/."
-    cp /usr/share/qlever-ui/qlever-ui.env.default ./qlever-ui.env
+    cp /usr/share/qlever-ui/qlever-ui.env.dev ./qlever-ui.env
     # Replace placeholder secret key with a secure random value
     secret=$(python3 -c "import secrets; print(secrets.token_urlsafe(50))")
     sed -i "s/change-me-on-install/$secret/" ./qlever-ui.env
