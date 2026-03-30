@@ -1,0 +1,33 @@
+#!/bin/sh
+
+if [ ! -f ./qleverui.sqlite3 ]; then
+    echo "qleverui.sqlite3 not found, copying default from /usr/share/qlever-ui/."
+    echo "The state of this development instance is persisted in qleverui.sqlite3."
+    cp /usr/share/qlever-ui/qleverui.sqlite3 ./qleverui.sqlite3
+fi
+if [ ! -f ./qlever-ui.env ]; then
+    echo "qlever-ui.env not found, copying default from /usr/share/qlever-ui/."
+    cp /usr/share/qlever-ui/qlever-ui.env.default ./qlever-ui.env
+    # Replace placeholder secret key with a secure random value
+    secret=$(python3 -c "import secrets; print(secrets.token_urlsafe(50))")
+    sed -i "s/change-me-on-install/$secret/" ./qlever-ui.env
+fi
+set -a
+. ./qlever-ui.env
+set +a
+export QLEVERUI_DATABASE_URL=sqlite:////$(pwd)/qleverui.sqlite3
+
+case "$1" in
+    dev)
+        /opt/venvs/qlever-ui/bin/python -m django migrate
+        /opt/venvs/qlever-ui/bin/python -m django runserver 0.0.0.0:8176
+        ;;
+    manage)
+        shift
+        exec /opt/venvs/qlever-ui/bin/python -m django "$@"
+        ;;
+    *)
+        echo "Usage: qlever-ui {dev|manage [args...]}" >&2
+        exit 1
+        ;;
+esac

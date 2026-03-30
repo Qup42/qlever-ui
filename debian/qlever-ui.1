@@ -1,0 +1,136 @@
+.TH QLEVER\-UI 1 "2026-03-30" "qlever-ui" "User Commands"
+.SH NAME
+qlever\-ui \- QLever UI development server and Django management tool
+.SH SYNOPSIS
+.B qlever\-ui dev
+.br
+.B qlever\-ui manage
+.RI [ django\-command
+.IR [args\|.\|.\|.] ]
+.SH DESCRIPTION
+.B qlever\-ui
+is a Django web application providing a browser-based interface for the
+QLever SPARQL engine.
+This command starts a local development server or runs Django management
+commands.
+.PP
+On first use in a directory,
+.B qlever\-ui
+initialises the instance automatically:
+.IP \(bu 2
+If
+.I ./qleverui.sqlite3
+is absent, a default database (containing a demo admin account) is
+copied from
+.IR /usr/share/qlever\-ui/qleverui.sqlite3 .
+.IP \(bu
+If
+.I ./qlever\-ui.env
+is absent, it is copied from
+.I /usr/share/qlever\-ui/qlever\-ui.env.default
+and the placeholder secret key is replaced with a securely generated
+random value.
+.PP
+Configuration is always read from
+.I ./qlever\-ui.env
+in the current working directory, and
+.B QLEVERUI_DATABASE_URL
+is always overridden to point to
+.I ./qleverui.sqlite3
+in that same directory.
+Run
+.B qlever\-ui
+from the directory where the instance files should live.
+.SH SUBCOMMANDS
+.TP
+.B dev
+Apply pending database migrations, then start the Django development
+server on
+.IR 0.0.0.0:8176 .
+The UI is reachable at
+.IR http://localhost:8176/ .
+The default database ships with an admin account
+.RB ( demo : demo );
+change this password before exposing the instance to a network.
+Not intended for production use.
+.TP
+.BI "manage " "[django\-command [args\|.\|.\|.]]"
+Pass arguments directly to
+.BR django\-admin .
+Useful for database migrations, account management, data import/export,
+and other maintenance tasks.
+.SH CONFIGURATION
+Variables are read from
+.IR ./qlever\-ui.env .
+.TP
+.B QLEVERUI_SECRET_KEY
+Django secret key.
+Generated automatically on first use.
+.TP
+.B QLEVERUI_DEBUG
+Enable Django debug mode.
+Default:
+.IR True .
+.TP
+.B QLEVERUI_ALLOWED_HOSTS
+Comma-separated list of hostnames Django will serve.
+Default:
+.IR localhost .
+.TP
+.B QLEVERUI_CSRF_TRUSTED_ORIGINS
+Comma-separated list of trusted origins for CSRF protection.
+Default:
+.IR http://localhost .
+.TP
+.B QLEVERUI_DATABASE_URL
+Database URL.
+Always overridden at startup to use the local SQLite file; any value
+set in
+.I qlever\-ui.env
+is ignored.
+.TP
+.B QLEVERUI_STATIC_ROOT
+Directory from which static files are served.
+Default:
+.IR /usr/share/qlever\-ui/static .
+.SH FILES
+.TP
+.I ./qlever\-ui.env
+Per-instance configuration (current directory).
+.TP
+.I ./qleverui.sqlite3
+Application database (current directory).
+.TP
+.I /usr/share/qlever\-ui/qlever\-ui.env.default
+Default configuration template.
+.TP
+.I /usr/share/qlever\-ui/qleverui.sqlite3
+Default database (copied on first use).
+.SH EXAMPLES
+Start a fresh instance:
+.PP
+.EX
+mkdir my\-qlever && cd my\-qlever
+qlever\-ui dev
+.EE
+.PP
+The server is then available at
+.IR http://localhost:8176/ .
+Log in to the admin panel at
+.I http://localhost:8176/admin
+with username
+.B demo
+and password
+.BR demo .
+.PP
+List all available management commands:
+.PP
+.EX
+qlever\-ui manage help
+.EE
+.SH SEE ALSO
+General QLever documentation:
+.I https://docs.qlever.dev
+.PP
+QLever UI configuration guide:
+.I https://github.com/qlever\-dev/qlever\-ui/blob/master/docs/configure_qleverui.md

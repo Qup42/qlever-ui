@@ -5,9 +5,12 @@ export DH_VIRTUALENV_INSTALL_ROOT=/opt/venvs
 	dh $@ --with python-virtualenv
 
 override_dh_virtualenv:
+	# Replace version string in settings.py with the actual packaged version
 	sed -i "s/^STATIC_VERSION = .*/STATIC_VERSION = \"Packaged version: $(shell dpkg-parsechangelog -S Version)\"/" qlever/settings.py
+	# Build the WASM formatter
 	npm ci
 	npm run build
+	# Create the virtual environment that will be included in the package
 	dh_virtualenv \
 		--python /usr/bin/python3 \
 		--builtin-venv \
