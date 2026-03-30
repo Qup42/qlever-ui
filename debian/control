@@ -18,11 +18,6 @@ Architecture: any
 Depends:
  ${misc:Depends},
  python3,
- adduser,
-Recommends:
- systemd,
-Suggests:
- nginx | apache2,
 Description: A user-friendly interface for the QLever SPARQL engine
  qlever-ui is a Django web application that provides a browser-based
  interface for the QLever SPARQL engine. It supports query editing,
