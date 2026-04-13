@@ -3,6 +3,7 @@
 qlever\-ui \- QLever UI development server and Django management tool
 .SH SYNOPSIS
 .B qlever\-ui dev
+.RI [ port ]
 .br
 .B qlever\-ui manage
 .RI [ django\-command
@@ -43,12 +44,14 @@ Run
 from the directory where the instance files should live.
 .SH SUBCOMMANDS
 .TP
-.B dev
+.BR "dev " [ port ]
 Apply pending database migrations, then start the Django development
 server on
-.IR 0.0.0.0:8176 .
+.RI 0.0.0.0: port
+(default:
+.IR 8176 ).
 The UI is reachable at
-.IR http://localhost:8176/ .
+.IR http://localhost:8176/ " (or the chosen port)."
 The default database ships with an admin account
 .RB ( demo : demo );
 change this password before exposing the instance to a network.
@@ -116,6 +119,12 @@ qlever\-ui dev
 .PP
 The server is then available at
 .IR http://localhost:8176/ .
+.PP
+Start on a custom port:
+.PP
+.EX
+qlever\-ui dev 9000
+.EE
 Log in to the admin panel at
 .I http://localhost:8176/admin
 with username
