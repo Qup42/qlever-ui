@@ -25,6 +25,10 @@ override_dh_virtualenv:
 	QLEVERUI_STATIC_ROOT=$(CURDIR)/debian/qlever-ui/usr/share/qlever-ui/static \
 		debian/qlever-ui/opt/venvs/qlever-ui/bin/python -m django collectstatic --noinput
 
+override_dh_clean:
+	dh_clean
+	rm -rf node_modules
+
 override_dh_shlibdeps:
 	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info
 
