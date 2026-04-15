@@ -11,12 +11,14 @@ override_dh_virtualenv:
 	npm ci
 	npm run build
 	# Create the virtual environment that will be included in the package
+	# I have a django project that I want to package for debian/ubuntu. The package will be available through a custom repository so it is not necessary to follow the strict debian guidelines. The are all available as packages but in wildly different versions. What are some ways for packaging that is also suitable for multiple distros?
 	dh_virtualenv \
 		--python /usr/bin/python3 \
 		--builtin-venv \
 		--preinstall "setuptools>=68.0" \
 		--preinstall "wheel>=0.41" \
-		--upgrade-pip
+		--upgrade-pip \
+		--extra-pip-arg "--no-compile"
 	# Collect static files into the package staging area
 	mkdir -p debian/qlever-ui/usr/share/qlever-ui/static
 	DJANGO_SETTINGS_MODULE=qlever.settings \
