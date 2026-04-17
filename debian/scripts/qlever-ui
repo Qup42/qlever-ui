@@ -17,13 +17,9 @@ set -a
 set +a
 export QLEVERUI_DATABASE_URL=sqlite:////$(pwd)/qleverui.sqlite3
 
-PORT=8176
-
 case "$1" in
     dev)
-        if [ -n "$2" ]; then
-            PORT="$2"
-        fi
+        PORT="${2:-8176}"
         /opt/venvs/qlever-ui/bin/python -m django migrate
         /opt/venvs/qlever-ui/bin/python -m django runserver "0.0.0.0:$PORT"
         ;;
