@@ -20,6 +20,7 @@ override_dh_virtualenv:
 		--upgrade-pip \
 		--extra-pip-arg "--no-compile"
 	# Collect static files into the package staging area
+	# ToDo: include templates in venv, but put static somewhere else? -> also strip down package-data to only templates
 	mkdir -p debian/qlever-ui/usr/share/qlever-ui/static
 	DJANGO_SETTINGS_MODULE=qlever.settings \
 	QLEVERUI_SECRET_KEY=build-time-placeholder \
