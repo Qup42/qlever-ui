@@ -1,0 +1,263 @@
+.TH QLEVER\-UI\-DEPLOY 7 "2026-03-30" "qlever-ui-deploy" "Miscellaneous"
+.SH NAME
+qlever\-ui\-deploy \- production deployment configuration for qlever\-ui
+.SH DESCRIPTION
+The
+.B qlever\-ui\-deploy
+package provides the configuration files needed to run
+.BR qlever\-ui (1)
+as a production service:
+.IP \(bu 2
+A
+.BR systemd (1)
+socket unit and service unit that start
+.B gunicorn
+listening on a Unix domain socket.
+.IP \(bu
+A ready-to-use
+.BR nginx (8)
+virtual-host configuration.
+.IP \(bu
+A ready-to-use
+.BR apache2 (8)
+virtual-host configuration.
+.PP
+After installation the service is not yet started or enabled.
+Follow the steps below to bring it up.
+.SH QUICK START
+Enable and start the socket and service:
+.PP
+.EX
+systemctl enable \-\-now qlever\-ui.socket
+systemctl enable \-\-now qlever\-ui.service
+.EE
+.PP
+Verify the service is running:
+.PP
+.EX
+systemctl status qlever\-ui.service
+.EE
+.PP
+The gunicorn process now listens on the Unix socket
+.IR /run/qlever\-ui/qlever\-ui.sock .
+Use one of the reverse-proxy configurations below to expose it over HTTP,
+or see
+.B DIRECT TCP EXPOSURE
+to bind to a TCP port instead.
+.SH NGINX
+The package installs an nginx virtual-host configuration at
+.IR /etc/nginx/sites\-available/qlever\-ui .
+It listens on port
+.B 8176
+and proxies all requests to the Unix socket.
+Static files are served directly from
+.IR /usr/share/qlever\-ui/static/ .
+.PP
+Enable the site and reload nginx:
+.PP
+.EX
+ln \-s /etc/nginx/sites\-available/qlever\-ui \e
+      /etc/nginx/sites\-enabled/qlever\-ui
+nginx \-t && systemctl reload nginx
+.EE
+.PP
+The UI is then reachable at
+.IR http://<host>:8176/ .
+.PP
+The
+.B www\-data
+user is added to the
+.B qlever\-ui
+group during package installation so that nginx can read the socket.
+If nginx is installed after
+.B qlever\-ui\-deploy
+you may need to add
+.B www\-data
+to the group manually:
+.PP
+.EX
+usermod \-aG qlever\-ui www\-data
+.EE
+.SH APACHE
+The package installs an Apache virtual-host configuration at
+.IR /etc/apache2/sites\-available/qlever\-ui.conf .
+It listens on port
+.B 8176
+and proxies all requests to the Unix socket via
+.BR mod_proxy .
+Static files are served directly from
+.IR /usr/share/qlever\-ui/static/ .
+.PP
+Enable the required modules and the site, then reload Apache:
+.PP
+.EX
+a2enmod proxy proxy_http headers
+a2ensite qlever\-ui
+systemctl reload apache2
+.EE
+.PP
+The UI is then reachable at
+.IR http://<host>:8176/ .
+.PP
+Apache's
+.B www\-data
+user must be a member of the
+.B qlever\-ui
+group to access the socket (see the note in the
+.B NGINX
+section above).
+.PP
+.B Note:
+Port 8176 is not in Apache's default
+.I ports.conf
+listen list.
+Add
+.B Listen 8176
+to
+.I /etc/apache2/ports.conf
+if Apache does not already listen on that port.
+.SH DIRECT TCP EXPOSURE
+By default the service binds to a Unix socket so that only a local reverse
+proxy can reach it.
+To expose the service directly on a TCP port — for example on a machine
+without nginx or Apache — override the service unit.
+.PP
+Create a systemd drop-in:
+.PP
+.EX
+systemctl edit qlever\-ui.service
+.EE
+.PP
+Add the following lines to the editor that opens
+.RI ( /etc/systemd/system/qlever\-ui.service.d/override.conf ):
+.PP
+.EX
+[Unit]
+After=network.target
+Requires=
+
+[Service]
+ExecStart=
+ExecStart=/opt/venvs/qlever\-ui/bin/gunicorn \e
+    qlever.wsgi:application \e
+    \-\-bind 0.0.0.0:8176 \e
+    \-\-workers 4 \e
+    \-\-timeout 120 \e
+    \-\-access\-logfile /var/log/qlever\-ui/access.log \e
+    \-\-error\-logfile /var/log/qlever\-ui/error.log \e
+    \-\-limit\-request\-line 10000
+.EE
+.PP
+Apply the changes:
+.PP
+.EX
+systemctl daemon\-reload
+systemctl restart qlever\-ui.service
+.EE
+.PP
+The UI is then reachable at
+.IR http://<host>:8176/ .
+The
+.B qlever\-ui.socket
+unit is no longer used and can be stopped and disabled:
+.PP
+.EX
+systemctl disable \-\-now qlever\-ui.socket
+.EE
+.PP
+.B Security note:
+When binding directly on TCP the service is reachable by any client that can
+connect to port 8176.
+Restrict access with a firewall if the port should not be publicly reachable.
+.SH CONFIGURATION
+Runtime configuration is stored in
+.IR /etc/qlever\-ui/qlever\-ui.env .
+This file is created during package installation and is readable only by
+.B root
+and members of the
+.B qlever\-ui
+group.
+Restart the service after making changes:
+.PP
+.EX
+systemctl restart qlever\-ui.service
+.EE
+.PP
+Before exposing the service externally, at minimum update
+.B QLEVERUI_ALLOWED_HOSTS
+and
+.B QLEVERUI_CSRF_TRUSTED_ORIGINS
+in
+.IR /etc/qlever\-ui/qlever\-ui.env
+to reflect the public hostname.
+.TP
+.B QLEVERUI_SECRET_KEY
+Django secret key.
+A secure random value is generated automatically at install time.
+Do not share or commit this value.
+.TP
+.B QLEVERUI_DEBUG
+Enable Django debug mode.
+Default:
+.IR False .
+.TP
+.B QLEVERUI_ALLOWED_HOSTS
+Comma-separated list of hostnames Django will serve.
+Must include the public hostname when the service is exposed externally.
+Default:
+.IR localhost .
+.TP
+.B QLEVERUI_CSRF_TRUSTED_ORIGINS
+Comma-separated list of trusted origins for CSRF protection.
+Must include the scheme and hostname, e.g.\&
+.IR https://qlever.example.com .
+Default:
+.IR http://localhost .
+.TP
+.B QLEVERUI_DATABASE_URL
+Database URL in
+.B django\-environ
+format.
+Default:
+.IR sqlite:////var/lib/qlever\-ui/qleverui.sqlite3 .
+.TP
+.B QLEVERUI_STATIC_ROOT
+Directory from which static files are served.
+Default:
+.IR /usr/share/qlever\-ui/static .
+.SH FILES
+.TP
+.I /etc/qlever\-ui/qlever\-ui.env
+Runtime configuration file.
+.TP
+.I /etc/nginx/sites\-available/qlever\-ui
+nginx virtual-host configuration.
+.TP
+.I /etc/apache2/sites\-available/qlever\-ui.conf
+Apache virtual-host configuration.
+.TP
+.I /lib/systemd/system/qlever\-ui.service
+Systemd service unit (gunicorn).
+.TP
+.I /lib/systemd/system/qlever\-ui.socket
+Systemd socket unit.
+.TP
+.I /run/qlever\-ui/qlever\-ui.sock
+Unix domain socket (created at runtime).
+.TP
+.I /var/lib/qlever\-ui/qleverui.sqlite3
+Application database.
+.TP
+.I /var/log/qlever\-ui/access.log
+Gunicorn access log.
+.TP
+.I /var/log/qlever\-ui/error.log
+Gunicorn error log.
+.TP
+.I /usr/share/qlever\-ui/static/
+Static files served directly by the web server.
+.SH SEE ALSO
+.BR qlever\-ui (1),
+.BR systemctl (1),
+.BR nginx (8),
+.BR apache2 (8)

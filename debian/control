@@ -22,3 +22,15 @@ Description: A user-friendly interface for the QLever SPARQL engine
  qlever-ui is a Django web application that provides a browser-based
  interface for the QLever SPARQL engine. It supports query editing,
  result display, and backend management.
+
+Package: qlever-ui-deploy
+Architecture: any
+Depends:
+ qlever-ui,
+ adduser,
+Recommends:
+ systemd,
+Suggests:
+ nginx | apache2,
+Description: Configuration files for deploying qlever-ui in a production setup.
+

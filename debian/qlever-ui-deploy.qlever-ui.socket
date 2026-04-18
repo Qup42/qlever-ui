@@ -1,0 +1,12 @@
+[Unit]
+Description=QLever UI socket
+PartOf=qlever-ui.service
+
+[Socket]
+ListenStream=/run/qlever-ui/qlever-ui.sock
+SocketUser=qlever-ui
+SocketGroup=qlever-ui
+SocketMode=0660
+
+[Install]
+WantedBy=sockets.target

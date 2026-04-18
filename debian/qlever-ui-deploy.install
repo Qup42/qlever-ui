@@ -1,0 +1,3 @@
+debian/qlever-ui.env.default usr/share/qlever-ui
+debian/configs/qlever-ui /etc/nginx/sites-available
+debian/configs/qlever-ui.conf /etc/apache2/sites-available
