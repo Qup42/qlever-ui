@@ -1,12 +1,17 @@
 #!/bin/sh
 
+# echo to stderr
+stderr() {
+    echo "$*" >&2
+}
+
 if [ ! -f ./qleverui.sqlite3 ]; then
-    echo "qleverui.sqlite3 not found, copying default from /usr/share/qlever-ui/."
-    echo "The state of this development instance is persisted in qleverui.sqlite3."
+    stderr "qleverui.sqlite3 not found, copying default from /usr/share/qlever-ui/."
+    stderr "The state of this development instance is persisted in qleverui.sqlite3."
     cp /usr/share/qlever-ui/qleverui.sqlite3 ./qleverui.sqlite3
 fi
 if [ ! -f ./qlever-ui.env ]; then
-    echo "qlever-ui.env not found, copying default from /usr/share/qlever-ui/."
+    stderr "qlever-ui.env not found, copying default from /usr/share/qlever-ui/."
     cp /usr/share/qlever-ui/qlever-ui.env.dev ./qlever-ui.env
     # Replace placeholder secret key with a secure random value
     secret=$(python3 -c "import secrets; print(secrets.token_urlsafe(50))")
