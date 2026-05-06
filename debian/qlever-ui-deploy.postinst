@@ -20,6 +20,7 @@ case "$1" in
         install -d -m 0750 -o qlever-ui -g qlever-ui /var/log/qlever-ui
         install -d -m 0750 -o qlever-ui -g qlever-ui /var/lib/qlever-ui
 
+        # ToDo: package secure default db
         # Install seed database if not already present
         if [ ! -f /var/lib/qlever-ui/qleverui.sqlite3 ]; then
             install -m 0640 -o qlever-ui -g qlever-ui \
