@@ -1,3 +1,10 @@
+qlever-ui (0.1.0-2) stable; urgency=medium
+
+  * prepend `INFO: ` to messages to make intent clearer
+  * update default settings for `qlever-ui dev` to work on all hosts
+
+ -- Julian Mundhahs <mundhahj@tf.uni-freiburg.de>  Thu, 07 May 2026 08:20:17 +0000
+
 qlever-ui (0.1.0-1) stable; urgency=medium
 
   * Match package version to the python package
